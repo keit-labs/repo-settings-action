@@ -1,0 +1,32 @@
+name: 'Configure Github Repo Settings'
+author: "Richard Keit"
+description: 'A GitHub Action to set a repostiory settings based on a configuration file"
+branding:
+  icon: 'github'
+  color: 'green'
+runs:
+  using: 'composite'
+  steps:
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        # cache: 'pipenv' # caching pip dependencies
+        # cache-dependency-path: ../../_actions/{{ github.action_repository }}/{{ github.action_ref }}/Pipfile.lock
+      # Added to locate script paths
+    - name: Install the pipenv
+      shell: bash
+      run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+    - name: Install
+      run: pipenv install
+      shell: bash
+    
+    - name: Configure the Repo
+      id: get-square
+      run: python ${{ github.action_path }}/configure_repo.py --token "{{ github.token }}"
+      shell: bash
+
+
+
